@@ -586,13 +586,13 @@ export async function execSshCommandWithConnection(manager: SSHConnectionManager
         if (!isResolved) {
           isResolved = true;
           clearTimeout(timeoutId);
-          if (stderr) {
-            reject(new McpError(ErrorCode.InternalError, `Error (code ${code}):\n${stderr}`));
+          if (code !== 0) {
+            reject(new McpError(ErrorCode.InternalError, `Error (code ${code}):\n${stderr || stdout}`));
           } else {
             resolve({
               content: [{
                 type: 'text',
-                text: stdout,
+                text: stdout + (stderr ? (stdout ? '\n' : '') + stderr : ''),
               }],
             });
           }
@@ -661,13 +661,13 @@ export async function execSshCommand(sshConfig: any, command: string, stdin?: st
             isResolved = true;
             clearTimeout(timeoutId);
             conn.end();
-            if (stderr) {
-              reject(new McpError(ErrorCode.InternalError, `Error (code ${code}):\n${stderr}`));
+            if (code !== 0) {
+              reject(new McpError(ErrorCode.InternalError, `Error (code ${code}):\n${stderr || stdout}`));
             } else {
               resolve({
                 content: [{
                   type: 'text',
-                  text: stdout,
+                  text: stdout + (stderr ? (stdout ? '\n' : '') + stderr : ''),
                 }],
               });
             }
