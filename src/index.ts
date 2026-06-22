@@ -709,6 +709,8 @@ async function main() {
 
   process.on('SIGINT', cleanup);
   process.on('SIGTERM', cleanup);
+  process.stdin.on('end', cleanup);
+  process.stdin.on('close', cleanup);
   process.on('exit', () => {
     if (connectionManager) {
       connectionManager.close();
